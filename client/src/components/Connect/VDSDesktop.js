@@ -42,7 +42,7 @@ const VDSDesktop = ({ server, token }) => {
         logger.error('Error response:', error.response?.data);
         logger.error('Error status:', error.response?.status);
         
-        let errorMessage = 'Bilinmeyen hata';
+        let errorMessage = 'Guacamole bağlantısı kurulamadı.';
         if (error.response?.data?.message) {
           errorMessage = error.response.data.message;
         } else if (error.response?.data?.error) {
@@ -52,7 +52,7 @@ const VDSDesktop = ({ server, token }) => {
         }
         
         if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
-          errorMessage = 'Backend sunucusuna bağlanılamıyor. Backend çalışıyor mu kontrol edin.';
+          errorMessage = 'Guacamole sunucusuna bağlanılamıyor. Guacamole deploy edilmiş mi kontrol edin.';
         }
         
         // Eğer response'da fallback URL varsa, onu kullan
@@ -61,7 +61,8 @@ const VDSDesktop = ({ server, token }) => {
           setConnected(true);
           setStatus('Guacamole API hatası. Manuel bağlantı sayfasına yönlendiriliyor...');
         } else {
-          setStatus('Bağlantı hatası: ' + errorMessage);
+          setStatus('❌ ' + errorMessage);
+          setConnected(false);
         }
       } finally {
         setLoading(false);
@@ -113,10 +114,34 @@ const VDSDesktop = ({ server, token }) => {
   }
 
   return (
-    <div className="vds-desktop-container">
-      <div className="desktop-status">
-        <p style={{ color: 'red' }}>{status}</p>
-        <div className="desktop-info">
+    <div className="vds-desktop-container" style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      minHeight: '100vh',
+      padding: '20px',
+      color: '#00ff41',
+      fontFamily: 'JetBrains Mono, monospace'
+    }}>
+      <div className="desktop-status" style={{
+        background: 'rgba(0, 0, 0, 0.8)',
+        border: '2px solid #00ff41',
+        borderRadius: '8px',
+        padding: '30px',
+        maxWidth: '600px',
+        textAlign: 'center'
+      }}>
+        <h2 style={{ color: '#ff6b6b', marginBottom: '20px' }}>⚠️ Guacamole Bağlantı Hatası</h2>
+        <p style={{ color: '#ff6b6b', fontSize: '18px', marginBottom: '20px' }}>{status}</p>
+        
+        <div className="desktop-info" style={{ 
+          textAlign: 'left', 
+          marginTop: '20px',
+          padding: '15px',
+          background: 'rgba(0, 255, 65, 0.1)',
+          borderRadius: '4px'
+        }}>
           <p><strong>Sunucu:</strong> {server.name}</p>
           <p><strong>IP:</strong> {server.ipAddress}</p>
           <p><strong>Tip:</strong> {server.desktopType}</p>
@@ -132,20 +157,49 @@ const VDSDesktop = ({ server, token }) => {
             </>
           )}
         </div>
-        <div className="desktop-note">
-          <h3>Guacamole Kurulumu Gerekli</h3>
-          <p>
+        
+        <div className="desktop-note" style={{ 
+          marginTop: '30px',
+          padding: '20px',
+          background: 'rgba(255, 107, 107, 0.1)',
+          borderRadius: '4px',
+          border: '1px solid #ff6b6b'
+        }}>
+          <h3 style={{ color: '#ff6b6b' }}>🔧 Guacamole Kurulumu Gerekli</h3>
+          <p style={{ marginTop: '15px', lineHeight: '1.6' }}>
             RDP/VNC bağlantıları için Apache Guacamole kurulmalıdır.
-            Detaylı kurulum için <code>GUACAMOLE_SETUP.md</code> dosyasına bakın.
+            Guacamole şu anda Render'da deploy edilmemiş.
           </p>
-          <p>
-            <strong>Hızlı Kurulum:</strong><br/>
-            <code>docker-compose -f docker-compose.guacamole.yml up -d</code>
+          <p style={{ marginTop: '15px' }}>
+            <strong>Seçenekler:</strong>
           </p>
-          <p style={{ color: '#ff6b6b', marginTop: '10px' }}>
-            <strong>⚠ ÖNEMLİ:</strong> Docker Desktop'ın çalıştığından emin olun!
+          <ul style={{ textAlign: 'left', marginTop: '10px', paddingLeft: '20px' }}>
+            <li>Guacamole'i ayrı bir VPS'te deploy edin</li>
+            <li>Veya local'de Docker ile çalıştırın (sadece test için)</li>
+            <li>VPS (SSH) bağlantıları Guacamole olmadan çalışır</li>
+          </ul>
+          <p style={{ marginTop: '15px', color: '#00ff41' }}>
+            <strong>Not:</strong> VPS (SSH) bağlantıları için Guacamole gerekmez, terminal bağlantısı çalışır.
           </p>
         </div>
+        
+        <button 
+          onClick={() => window.location.href = '/dashboard'}
+          style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            background: '#00ff41',
+            color: '#000',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            fontFamily: 'JetBrains Mono, monospace'
+          }}
+        >
+          Dashboard'a Dön
+        </button>
       </div>
       <div ref={screenRef} className="desktop-screen"></div>
     </div>
