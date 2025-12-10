@@ -1,0 +1,53 @@
+services:
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: guacd
+    restart: unless-stopped
+    volumes:
+      - guacd-drive:/drive
+      - guacd-record:/record
+    networks:
+      - guacamole
+
+  guacamole:
+    image: guacamole/guacamole:latest
+    container_name: guacamole
+    restart: unless-stopped
+    depends_on:
+      - guacd
+      - postgres
+    environment:
+      GUACD_HOSTNAME: guacd
+      GUACD_PORT: 4822
+      POSTGRESQL_HOSTNAME: postgres
+      POSTGRESQL_DATABASE: guacamole_db
+      POSTGRESQL_USERNAME: guacamole_user
+      POSTGRESQL_PASSWORD: guacamole_password
+    ports:
+      - "8080:8080"
+    networks:
+      - guacamole
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: guacamole-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: guacamole_db
+      POSTGRES_USER: guacamole_user
+      POSTGRES_PASSWORD: guacamole_password
+    volumes:
+      - guacamole-db:/var/lib/postgresql/data
+    networks:
+      - guacamole
+
+volumes:
+  guacd-drive:
+  guacd-record:
+  guacamole-db:
+
+networks:
+  guacamole:
+    driver: bridge
+
+

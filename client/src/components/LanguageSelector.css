@@ -1,0 +1,36 @@
+/* Terminal/Cyber Theme - Language Selector */
+
+.language-selector {
+  display: inline-block;
+}
+
+.language-select {
+  padding: 10px 16px;
+  border: 1px solid hsl(160, 30%, 20%);
+  border-radius: 8px;
+  background: hsl(220, 15%, 15%);
+  color: hsl(160, 100%, 95%);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.language-select:focus {
+  outline: none;
+  border-color: hsl(160, 100%, 50%);
+  box-shadow: 0 0 0 3px hsl(160, 100%, 50%, 0.1), 0 0 20px hsl(160, 100%, 50%, 0.2);
+  background: hsl(220, 15%, 18%);
+}
+
+.language-select:hover {
+  border-color: hsl(160, 100%, 50%, 0.5);
+  background: hsl(220, 15%, 18%);
+}
+
+.language-select option {
+  background: hsl(220, 20%, 8%);
+  color: hsl(160, 100%, 95%);
+  font-family: 'Inter', sans-serif;
+}

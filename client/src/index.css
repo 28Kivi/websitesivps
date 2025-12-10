@@ -1,0 +1,362 @@
+/* Terminal/Cyber Theme - ServerHub */
+
+/* CSS Variables - Terminal Color Palette */
+:root {
+  /* Background Colors */
+  --bg-primary: hsl(220, 20%, 4%);
+  --bg-card: hsl(220, 20%, 8%);
+  --bg-secondary: hsl(220, 15%, 15%);
+  --bg-muted: hsl(220, 15%, 12%);
+  
+  /* Foreground Colors */
+  --fg-primary: hsl(160, 100%, 95%);
+  --fg-muted: hsl(220, 10%, 55%);
+  
+  /* Terminal Colors */
+  --terminal-green: hsl(160, 100%, 50%);
+  --terminal-cyan: hsl(180, 100%, 50%);
+  --terminal-amber: hsl(45, 100%, 50%);
+  --terminal-red: hsl(0, 100%, 60%);
+  
+  /* Accent Colors */
+  --accent-primary: hsl(160, 100%, 50%);
+  --accent-secondary: hsl(180, 100%, 45%);
+  
+  /* Border Colors */
+  --border-color: hsl(160, 30%, 20%);
+  --border-glow: hsl(160, 100%, 50%);
+  
+  /* Status Colors */
+  --status-online: hsl(160, 100%, 50%);
+  --status-offline: hsl(0, 80%, 55%);
+  --status-connecting: hsl(45, 100%, 50%);
+  
+  /* Shadows */
+  --shadow-neon: 0 0 30px hsl(160, 100%, 50%, 0.3);
+  --shadow-card: 0 8px 32px hsl(160, 100%, 50%, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Grid Pattern Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(hsl(160, 100%, 50%, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(160, 100%, 50%, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* Scanline Effect (CRT Monitor) */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(transparent 50%, hsl(160, 100%, 50%, 0.02) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(160, 100%, 50%, 0.3);
+  border-radius: 6px;
+  border: 2px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(160, 100%, 50%, 0.5);
+  box-shadow: 0 0 10px hsl(160, 100%, 50%, 0.3);
+}
+
+/* Selection */
+::selection {
+  background: hsl(160, 100%, 50%, 0.3);
+  color: var(--fg-primary);
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(160, 100%, 50%, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(160, 100%, 50%, 0.6);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--terminal-green), var(--terminal-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* Glass Card Effect */
+.glass-card {
+  background: hsl(220, 20%, 8%, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid hsl(160, 30%, 25%, 0.3);
+  box-shadow: var(--shadow-card);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    var(--terminal-green), 
+    transparent
+  );
+  opacity: 0.5;
+}
+
+/* Neon Glow Effect */
+.neon-glow {
+  box-shadow: var(--shadow-neon);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Terminal Style Elements */
+.terminal-text {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  color: var(--terminal-green);
+  text-shadow: 0 0 10px hsl(160, 100%, 50%, 0.5);
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background: var(--terminal-green);
+  margin-left: 2px;
+  animation: blink 1s infinite;
+  box-shadow: 0 0 10px hsl(160, 100%, 50%, 0.8);
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.status-online {
+  background: hsl(160, 100%, 50%, 0.2);
+  color: var(--terminal-green);
+  border: 1px solid hsl(160, 100%, 50%, 0.4);
+  box-shadow: 0 0 10px hsl(160, 100%, 50%, 0.2);
+}
+
+.status-offline {
+  background: hsl(0, 80%, 55%, 0.2);
+  color: var(--terminal-red);
+  border: 1px solid hsl(0, 80%, 55%, 0.4);
+  box-shadow: 0 0 10px hsl(0, 80%, 55%, 0.2);
+}
+
+.status-connecting {
+  background: hsl(45, 100%, 50%, 0.2);
+  color: var(--terminal-amber);
+  border: 1px solid hsl(45, 100%, 50%, 0.4);
+  box-shadow: 0 0 10px hsl(45, 100%, 50%, 0.2);
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+/* Utility Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.4s ease-out;
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Code Block Styling */
+code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  color: var(--terminal-green);
+  font-size: 0.9em;
+}
+
+pre {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: var(--bg-secondary);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  color: var(--terminal-green);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+/* Link Styling */
+a {
+  color: var(--terminal-cyan);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+
+a:hover {
+  color: var(--terminal-green);
+  border-bottom-color: var(--terminal-green);
+  text-shadow: 0 0 8px hsl(160, 100%, 50%, 0.5);
+}
+
+/* Focus Styles */
+*:focus {
+  outline: 2px solid var(--terminal-green);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsl(160, 100%, 50%, 0.1);
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}

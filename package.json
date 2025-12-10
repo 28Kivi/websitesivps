@@ -1,0 +1,20 @@
+{
+  "name": "vps-vds-connection-platform",
+  "version": "1.0.0",
+  "description": "Web-based platform for secure VPS/VDS server connections",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && nodemon index.js",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": ["vps", "vds", "ssh", "rdp", "remote-desktop"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+

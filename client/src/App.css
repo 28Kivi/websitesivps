@@ -1,0 +1,278 @@
+/* Terminal/Cyber Theme - App Styles */
+
+.App {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Glass Card Effect */
+.glass {
+  background: hsl(220, 20%, 8%, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid hsl(160, 30%, 25%, 0.3);
+  box-shadow: 0 8px 32px hsl(160, 100%, 50%, 0.05);
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Card */
+.card {
+  background: hsl(220, 20%, 8%, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid hsl(160, 30%, 25%, 0.3);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 32px hsl(160, 100%, 50%, 0.05);
+  margin-bottom: 20px;
+  color: hsl(160, 100%, 95%);
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Button Variants */
+.btn-primary {
+  background: hsl(160, 100%, 50%);
+  color: hsl(220, 20%, 4%);
+  box-shadow: 0 0 30px hsl(160, 100%, 50%, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 40px hsl(160, 100%, 50%, 0.5);
+  background: hsl(160, 100%, 55%);
+}
+
+.btn-outline {
+  background: transparent;
+  color: hsl(160, 100%, 50%);
+  border: 2px solid hsl(160, 100%, 50%);
+}
+
+.btn-outline:hover {
+  background: hsl(160, 100%, 50%, 0.1);
+  box-shadow: 0 0 20px hsl(160, 100%, 50%, 0.3);
+}
+
+.btn-terminal {
+  background: hsl(160, 100%, 50%, 0.1);
+  color: hsl(160, 100%, 50%);
+  border: 1px solid hsl(160, 100%, 50%, 0.3);
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 15px hsl(160, 100%, 50%, 0.2);
+}
+
+.btn-terminal:hover {
+  background: hsl(160, 100%, 50%, 0.2);
+  box-shadow: 0 0 25px hsl(160, 100%, 50%, 0.4);
+}
+
+.btn-glow {
+  background: hsl(160, 100%, 50%);
+  color: hsl(220, 20%, 4%);
+  box-shadow: 0 0 30px hsl(160, 100%, 50%, 0.6);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.btn-glass {
+  background: hsl(220, 20%, 8%, 0.5);
+  backdrop-filter: blur(10px);
+  color: hsl(160, 100%, 95%);
+  border: 1px solid hsl(160, 30%, 25%, 0.3);
+}
+
+.btn-glass:hover {
+  background: hsl(220, 20%, 12%, 0.7);
+  border-color: hsl(160, 100%, 50%, 0.5);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: hsl(160, 100%, 95%);
+}
+
+.btn-ghost:hover {
+  background: hsl(160, 100%, 50%, 0.1);
+  color: hsl(160, 100%, 50%);
+}
+
+.btn-success {
+  background: hsl(160, 100%, 50%);
+  color: hsl(220, 20%, 4%);
+  box-shadow: 0 0 30px hsl(160, 100%, 50%, 0.3);
+}
+
+.btn-success:hover {
+  box-shadow: 0 0 40px hsl(160, 100%, 50%, 0.5);
+}
+
+.btn-danger {
+  background: hsl(0, 80%, 55%);
+  color: hsl(160, 100%, 95%);
+  box-shadow: 0 0 30px hsl(0, 80%, 55%, 0.3);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 0 40px hsl(0, 80%, 55%, 0.5);
+  background: hsl(0, 80%, 60%);
+}
+
+.btn-secondary {
+  background: hsl(220, 15%, 15%);
+  color: hsl(160, 100%, 95%);
+  border: 1px solid hsl(160, 30%, 20%);
+}
+
+.btn-secondary:hover {
+  background: hsl(220, 15%, 20%);
+  border-color: hsl(160, 100%, 50%, 0.5);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: hsl(160, 100%, 95%);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid hsl(160, 30%, 20%);
+  border-radius: 8px;
+  font-size: 15px;
+  background: hsl(220, 15%, 15%);
+  color: hsl(160, 100%, 95%);
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: hsl(160, 100%, 50%);
+  box-shadow: 0 0 0 3px hsl(160, 100%, 50%, 0.1), 0 0 20px hsl(160, 100%, 50%, 0.2);
+  background: hsl(220, 15%, 18%);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: hsl(220, 10%, 55%);
+}
+
+/* Error Message */
+.error-message {
+  color: hsl(0, 100%, 60%);
+  font-size: 13px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: hsl(0, 80%, 55%, 0.1);
+  border-left: 3px solid hsl(0, 100%, 60%);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 10px hsl(0, 100%, 60%, 0.2);
+}
+
+.error-message::before {
+  content: '⚠';
+  font-size: 16px;
+}
+
+/* Success Message */
+.success-message {
+  color: hsl(160, 100%, 50%);
+  font-size: 13px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: hsl(160, 100%, 50%, 0.1);
+  border-left: 3px solid hsl(160, 100%, 50%);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 10px hsl(160, 100%, 50%, 0.2);
+}
+
+.success-message::before {
+  content: '✓';
+  font-size: 16px;
+}
+
+/* Pulse Glow Animation */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(160, 100%, 50%, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(160, 100%, 50%, 0.6);
+  }
+}
