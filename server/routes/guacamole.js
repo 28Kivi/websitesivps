@@ -432,6 +432,22 @@ router.get('/connection/:token', async (req, res) => {
       console.error('Full error:', createError);
       console.error('Error response:', createError.response?.data);
       
+      // Guacamole sunucusuna bağlanılamıyorsa, kullanıcıya açıklayıcı hata döndür
+      if (createError.code === 'ECONNREFUSED' || createError.message.includes('ECONNREFUSED')) {
+        return res.status(503).json({
+          success: false,
+          message: 'Guacamole sunucusuna bağlanılamıyor. Guacamole deploy edilmiş mi kontrol edin.',
+          error: 'Guacamole service unavailable',
+          details: 'Guacamole servisi çalışmıyor veya erişilemiyor. VDS (RDP/VNC) bağlantıları için Guacamole gereklidir.',
+          serverInfo: {
+            name: serverData.name,
+            ipAddress: serverData.ipAddress,
+            type: 'VDS',
+            desktopType: serverData.desktopType
+          }
+        });
+      }
+      
       // Alternatif: Mevcut çalışan connection'ı kullan
       // Guacamole'da manuel oluşturulan connection'ı bul
       try {
