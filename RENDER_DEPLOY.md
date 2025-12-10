@@ -117,6 +117,8 @@ CLIENT_URL=https://vps-frontend.onrender.com
    - **Build Command**: `npm install --legacy-peer-deps && npm run build`
    - **Publish Directory**: `build`
 
+**Not:** `client/public/_redirects` dosyası tüm route'ları `index.html`'e yönlendirir (React Router için gerekli).
+
 ### Adım 3: Environment Variables
 **"Environment"** sekmesine gidin ve şunları ekleyin:
 
@@ -217,6 +219,24 @@ Veya backend kodunda otomatik migration ekleyebilirsiniz.
 - Render'ın free tier'ı 15 dakika kullanılmazsa uyku moduna girer
 - İlk istekte 30-60 saniye sürebilir (cold start)
 - Production için Starter plan ($7/ay) önerilir
+
+**Uyku modunu önlemek için:**
+1. **UptimeRobot (Ücretsiz):**
+   - https://uptimerobot.com adresine kaydol
+   - "Add New Monitor" → "HTTP(s)" seç
+   - URL: `https://vps-backend-r1rf.onrender.com/api/health`
+   - Monitoring Interval: 5 dakika (ücretsiz plan)
+   - Her 5 dakikada bir ping atar, uyku moduna girmesini önler
+
+2. **Cron-job.org (Ücretsiz):**
+   - https://cron-job.org adresine kaydol
+   - Yeni cron job oluştur
+   - URL: `https://vps-backend-r1rf.onrender.com/api/health`
+   - Schedule: Her 10 dakikada bir
+
+3. **Starter Plan ($7/ay):**
+   - Render'da backend servisini Starter plan'a yükselt
+   - Her zaman çalışır, uyku moduna girmez
 
 ### Environment Variables güncellenmedi
 - Değişkenleri ekledikten sonra servisi **"Manual Deploy"** → **"Clear build cache & deploy"** ile yeniden deploy edin
