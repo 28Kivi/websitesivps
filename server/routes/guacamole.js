@@ -76,7 +76,9 @@ async function getAuthToken() {
     console.error('Guacamole auth error:', error.response?.data || error.message);
     console.error('Error code:', error.code);
     if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-      throw new Error('Guacamole sunucusuna bağlanılamıyor. Docker container çalışıyor mu kontrol edin: docker-compose -f docker-compose.guacamole.yml up -d');
+      const connectionError = new Error('Guacamole sunucusuna bağlanılamıyor. Docker container çalışıyor mu kontrol edin: docker-compose -f docker-compose.guacamole.yml up -d');
+      connectionError.code = 'ECONNREFUSED'; // Code'u koru
+      throw connectionError;
     }
     throw new Error('Guacamole authentication failed: ' + (error.message || 'Bilinmeyen hata'));
   }
@@ -430,10 +432,15 @@ router.get('/connection/:token', async (req, res) => {
     } catch (createError) {
       console.error('Guacamole connection creation failed:', createError.message);
       console.error('Full error:', createError);
+      console.error('Error code:', createError.code);
       console.error('Error response:', createError.response?.data);
       
       // Guacamole sunucusuna bağlanılamıyorsa, kullanıcıya açıklayıcı hata döndür
-      if (createError.code === 'ECONNREFUSED' || createError.message.includes('ECONNREFUSED')) {
+      const isConnectionRefused = createError.code === 'ECONNREFUSED' || 
+                                   createError.message?.includes('ECONNREFUSED') ||
+                                   createError.message?.includes('Guacamole sunucusuna bağlanılamıyor');
+      
+      if (isConnectionRefused) {
         return res.status(503).json({
           success: false,
           message: 'Guacamole sunucusuna bağlanılamıyor. Guacamole deploy edilmiş mi kontrol edin.',
@@ -489,17 +496,42 @@ router.get('/connection/:token', async (req, res) => {
         }
       } catch (listError) {
         console.error('Failed to list existing connections:', listError.message);
+        // listError da ECONNREFUSED olabilir, kontrol et
+        const isListErrorConnectionRefused = listError.code === 'ECONNREFUSED' || 
+                                             listError.message?.includes('ECONNREFUSED') ||
+                                             listError.message?.includes('Guacamole sunucusuna bağlanılamıyor');
+        
+        if (isListErrorConnectionRefused) {
+          return res.status(503).json({
+            success: false,
+            message: 'Guacamole sunucusuna bağlanılamıyor. Guacamole deploy edilmiş mi kontrol edin.',
+            error: 'Guacamole service unavailable',
+            details: 'Guacamole servisi çalışmıyor veya erişilemiyor. VDS (RDP/VNC) bağlantıları için Guacamole gereklidir.',
+            serverInfo: {
+              name: serverData.name,
+              ipAddress: serverData.ipAddress,
+              type: 'VDS',
+              desktopType: serverData.desktopType
+            }
+          });
+        }
       }
       
       // Fallback: Eğer API başarısız olursa, direkt Guacamole web arayüzüne yönlendir
       const fallbackUrl = `${GUACAMOLE_URL}/#/settings/connections`;
       
       // Hiçbir şey işe yaramazsa, hata döndür ama detaylı bilgi ver
-      res.status(500).json({
+      res.status(503).json({
         success: false,
         error: 'Guacamole bağlantısı oluşturulamadı',
-        message: createError.response?.data?.message || createError.message || 'Bilinmeyen hata',
-        details: createError.code === 'ECONNREFUSED' ? 'Guacamole sunucusuna bağlanılamıyor. Docker container çalışıyor mu kontrol edin.' : undefined,
+        message: createError.response?.data?.message || createError.message || 'Guacamole sunucusuna bağlanılamıyor',
+        details: 'Guacamole servisi çalışmıyor veya erişilemiyor. VDS (RDP/VNC) bağlantıları için Guacamole gereklidir.',
+        serverInfo: {
+          name: serverData.name,
+          ipAddress: serverData.ipAddress,
+          type: 'VDS',
+          desktopType: serverData.desktopType
+        },
         fallbackUrl: fallbackUrl
       });
     }
