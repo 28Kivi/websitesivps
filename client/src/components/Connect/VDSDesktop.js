@@ -24,9 +24,19 @@ const VDSDesktop = ({ server, token }) => {
           const url = response.data.iframeUrl || response.data.url;
           logger.log('Guacamole connection URL received:', url);
           logger.log('Connection ID:', response.data.connectionId);
+          logger.log('Full response:', response.data);
+          
+          // URL'yi kontrol et
+          if (!url) {
+            logger.error('No URL received from backend');
+            setStatus('❌ Backend URL döndürmedi');
+            setConnected(false);
+            return;
+          }
+          
           setGuacamoleUrl(url);
           setConnected(true);
-          setStatus('Bağlantı başarılı');
+          setStatus('Bağlantı başarılı - Yükleniyor...');
         } else {
           // Fallback URL varsa göster
           if (response.data.fallbackUrl) {
@@ -99,7 +109,12 @@ const VDSDesktop = ({ server, token }) => {
           className="vds-desktop-iframe"
           title={`${server.name} - ${server.desktopType} Desktop`}
           allowFullScreen
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation"
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none'
+          }}
           onError={(e) => {
             logger.error('Iframe error:', e);
             setStatus('Iframe yüklenirken hata oluştu');
@@ -107,6 +122,7 @@ const VDSDesktop = ({ server, token }) => {
           }}
           onLoad={() => {
             logger.log('Iframe loaded successfully');
+            setStatus('Bağlantı başarılı');
           }}
         />
       </div>
