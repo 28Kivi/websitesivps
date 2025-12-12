@@ -13,6 +13,7 @@ const VDSDesktop = ({ server, token }) => {
   const [connected, setConnected] = useState(false);
   const [guacamoleUrl, setGuacamoleUrl] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [shouldOpenNewTab, setShouldOpenNewTab] = useState(false);
 
   useEffect(() => {
     const fetchGuacamoleConnection = async () => {
@@ -90,6 +91,18 @@ const VDSDesktop = ({ server, token }) => {
     };
   }, [server, token]);
 
+  // Yeni sekmede Guacamole'i aç
+  useEffect(() => {
+    if (connected && guacamoleUrl && !shouldOpenNewTab) {
+      logger.log('Opening Guacamole in new tab:', guacamoleUrl);
+      const newWindow = window.open(guacamoleUrl, '_blank', 'noopener,noreferrer');
+      if (!newWindow) {
+        setStatus('⚠️ Popup engelleyici aktif! Lütfen popup\'lara izin verin.');
+      }
+      setShouldOpenNewTab(true);
+    }
+  }, [connected, guacamoleUrl, shouldOpenNewTab]);
+
   if (loading) {
     return (
       <div className="vds-desktop-container">
@@ -101,16 +114,6 @@ const VDSDesktop = ({ server, token }) => {
   }
 
   if (connected && guacamoleUrl) {
-    logger.log('Opening Guacamole in new tab:', guacamoleUrl);
-    
-    // Yeni sekmede Guacamole'i aç
-    React.useEffect(() => {
-      const newWindow = window.open(guacamoleUrl, '_blank', 'noopener,noreferrer');
-      if (!newWindow) {
-        setStatus('⚠️ Popup engelleyici aktif! Lütfen popup\'lara izin verin.');
-      }
-    }, [guacamoleUrl]);
-    
     return (
       <div className="vds-desktop-container" style={{ 
         display: 'flex', 
