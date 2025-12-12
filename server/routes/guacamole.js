@@ -7,8 +7,19 @@ const Server = require('../models/Server');
 const router = express.Router();
 
 const GUACAMOLE_URL = process.env.GUACAMOLE_URL || 'http://localhost:8080/guacamole';
+// Public URL for frontend (if not set, use CLIENT_URL + /guacamole path)
+const GUACAMOLE_PUBLIC_URL = process.env.GUACAMOLE_PUBLIC_URL || 
+  (process.env.CLIENT_URL ? `${process.env.CLIENT_URL}/guacamole` : GUACAMOLE_URL);
 const GUACAMOLE_USER = process.env.GUACAMOLE_USER || 'guacadmin';
 const GUACAMOLE_PASS = process.env.GUACAMOLE_PASS || 'guacadmin';
+
+// Debug: Log environment variables on startup
+console.log('=== Guacamole Configuration ===');
+console.log('GUACAMOLE_URL:', GUACAMOLE_URL);
+console.log('GUACAMOLE_PUBLIC_URL:', GUACAMOLE_PUBLIC_URL);
+console.log('CLIENT_URL:', process.env.CLIENT_URL);
+console.log('GUACAMOLE_PUBLIC_URL (env):', process.env.GUACAMOLE_PUBLIC_URL);
+console.log('==============================');
 
 let authToken = null;
 let tokenExpiry = null;
@@ -347,7 +358,8 @@ router.get('/connection/:token', async (req, res) => {
           console.log('✓ Using existing connection ID:', existingConnectionId);
           
           // Guacamole client URL formatı - token ile authentication
-          const clientUrl = `${GUACAMOLE_URL}/#/client/${existingConnectionId}?token=${authToken}`;
+          // Use public URL for frontend
+          const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${existingConnectionId}?token=${authToken}`;
           
           console.log('Connection URL:', clientUrl.replace(authToken, 'TOKEN_HIDDEN'));
           
@@ -417,10 +429,14 @@ router.get('/connection/:token', async (req, res) => {
       // Option 3: Direkt connection parametreleri ile (daha iyi - her seferinde yeni connection gerekmez)
       
       // En iyi yöntem: Token'ı URL'e ekle ama connection parametrelerini de ekleyelim
-      const clientUrl = `${GUACAMOLE_URL}/#/client/${connectionId}?token=${guacamoleAuthToken}`;
+      // Use public URL for frontend
+      const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${connectionId}?token=${guacamoleAuthToken}`;
 
       console.log('Generated Guacamole client URL with auth token');
       console.log('Connection ID:', connectionId);
+      console.log('DEBUG - GUACAMOLE_PUBLIC_URL value:', GUACAMOLE_PUBLIC_URL);
+      console.log('DEBUG - process.env.GUACAMOLE_PUBLIC_URL:', process.env.GUACAMOLE_PUBLIC_URL);
+      console.log('DEBUG - process.env.CLIENT_URL:', process.env.CLIENT_URL);
       console.log('Client URL (token hidden):', clientUrl.replace(guacamoleAuthToken, 'TOKEN_HIDDEN'));
 
       res.json({
@@ -483,7 +499,7 @@ router.get('/connection/:token', async (req, res) => {
         
         if (existingConnectionId) {
           console.log('Using existing connection ID:', existingConnectionId);
-          const clientUrl = `${GUACAMOLE_URL}/#/client/${existingConnectionId}?token=${authToken}`;
+          const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${existingConnectionId}?token=${authToken}`;
           return res.json({
             success: true,
             connectionId: existingConnectionId,
