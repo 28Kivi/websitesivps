@@ -101,30 +101,55 @@ const VDSDesktop = ({ server, token }) => {
   }
 
   if (connected && guacamoleUrl) {
-    logger.log('Rendering Guacamole iframe with URL:', guacamoleUrl);
+    logger.log('Opening Guacamole in new tab:', guacamoleUrl);
+    // Yeni sekmede Guacamole'i aç
+    window.open(guacamoleUrl, '_blank');
+    
     return (
-      <div className="vds-desktop-container">
-        <iframe
-          src={guacamoleUrl}
-          className="vds-desktop-iframe"
-          title={`${server.name} - ${server.desktopType} Desktop`}
-          allowFullScreen
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation"
-          style={{
-            width: '100%',
-            height: '100%',
-            border: 'none'
-          }}
-          onError={(e) => {
-            logger.error('Iframe error:', e);
-            setStatus('Iframe yüklenirken hata oluştu');
-            setConnected(false);
-          }}
-          onLoad={() => {
-            logger.log('Iframe loaded successfully');
-            setStatus('Bağlantı başarılı');
-          }}
-        />
+      <div className="vds-desktop-container" style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh',
+        padding: '20px',
+        color: '#00ff41',
+        fontFamily: 'JetBrains Mono, monospace'
+      }}>
+        <div className="desktop-status" style={{
+          background: 'rgba(0, 0, 0, 0.8)',
+          border: '2px solid #00ff41',
+          borderRadius: '8px',
+          padding: '30px',
+          maxWidth: '600px',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ color: '#00ff41', marginBottom: '20px' }}>✅ Bağlantı Başarılı!</h2>
+          <p style={{ fontSize: '18px', marginBottom: '20px' }}>
+            Guacamole yeni sekmede açıldı.
+          </p>
+          <p style={{ fontSize: '14px', marginBottom: '20px', opacity: 0.8 }}>
+            Eğer yeni sekme açılmadıysa, tarayıcınızın popup engelleyicisini kontrol edin.
+          </p>
+          
+          <button 
+            onClick={() => window.location.href = '/dashboard'}
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              background: '#00ff41',
+              color: '#000',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              fontFamily: 'JetBrains Mono, monospace'
+            }}
+          >
+            Dashboard'a Dön
+          </button>
+        </div>
       </div>
     );
   }
