@@ -6,10 +6,11 @@ const Server = require('../models/Server');
 
 const router = express.Router();
 
+// Backend için Guacamole API URL (Docker container)
 const GUACAMOLE_URL = process.env.GUACAMOLE_URL || 'http://localhost:8080/guacamole';
-// Public URL for frontend (if not set, use CLIENT_URL + /guacamole path)
+// Frontend için Guacamole URL (Backend proxy üzerinden - same origin)
 const GUACAMOLE_PUBLIC_URL = process.env.GUACAMOLE_PUBLIC_URL || 
-  (process.env.CLIENT_URL ? `${process.env.CLIENT_URL}/guacamole` : GUACAMOLE_URL);
+  (process.env.CLIENT_URL ? `${process.env.CLIENT_URL}/guacamole` : 'http://localhost:5000/guacamole');
 const GUACAMOLE_USER = process.env.GUACAMOLE_USER || 'guacadmin';
 const GUACAMOLE_PASS = process.env.GUACAMOLE_PASS || 'guacadmin';
 
