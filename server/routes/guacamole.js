@@ -431,10 +431,11 @@ router.get('/connection/:token', async (req, res) => {
       // Option 2: /#/client/CONNECTION_ID?token=AUTH_TOKEN (token URL'de - bu çalışır)
       // Option 3: Direkt connection parametreleri ile (daha iyi - her seferinde yeni connection gerekmez)
       
-      // Guacamole client URL formatı: /#/client/CONNECTION_ID?token=TOKEN
-      // dataSource bilgisi connection'da mevcut, URL'de gerekli değil
+      // Guacamole client URL formatı: /#/client/DATA_SOURCE/TYPE/CONNECTION_ID?token=TOKEN
+      // DATA_SOURCE: postgresql, mysql, etc.
+      // TYPE: c (connection), g (connection group)
       // Use public URL for frontend
-      const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${connectionId}?token=${guacamoleAuthToken}`;
+      const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${dataSource}/c/${connectionId}?token=${guacamoleAuthToken}`;
 
       console.log('Generated Guacamole client URL with auth token');
       console.log('Connection ID:', connectionId);
