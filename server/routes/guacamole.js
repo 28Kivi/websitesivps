@@ -432,9 +432,9 @@ router.get('/connection/:token', async (req, res) => {
       // Option 3: Direkt connection parametreleri ile (daha iyi - her seferinde yeni connection gerekmez)
       
       // En iyi yöntem: Token'ı URL'e ekle ve dataSource parametresini de ekle
-      // Guacamole WebSocket tunnel için dataSource gerekli
+      // Guacamole WebSocket tunnel için dataSource gerekli (query parameter olarak)
       // Use public URL for frontend
-      const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${connectionId}?token=${guacamoleAuthToken}&GUAC_DATA_SOURCE=${dataSource}`;
+      const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${connectionId}?token=${guacamoleAuthToken}&dataSource=${dataSource}`;
 
       console.log('Generated Guacamole client URL with auth token');
       console.log('Connection ID:', connectionId);
