@@ -426,11 +426,6 @@ router.get('/connection/:token', async (req, res) => {
       // DataSource'u al (Guacamole WebSocket tunnel için gerekli)
       const dataSource = await getDataSource() || 'postgresql';
 
-      // Guacamole client URL formatı: 
-      // Option 1: /#/client/CONNECTION_ID (token cookie/session'da olmalı - çalışmaz iframe'de)
-      // Option 2: /#/client/CONNECTION_ID?token=AUTH_TOKEN (token URL'de - bu çalışır)
-      // Option 3: Direkt connection parametreleri ile (daha iyi - her seferinde yeni connection gerekmez)
-      
       // Guacamole client URL formatı: /#/client/DATA_SOURCE/TYPE/CONNECTION_ID?token=TOKEN
       // DATA_SOURCE: postgresql, mysql, etc.
       // TYPE: c (connection), g (connection group)
@@ -440,6 +435,7 @@ router.get('/connection/:token', async (req, res) => {
       console.log('Generated Guacamole client URL with auth token');
       console.log('Connection ID:', connectionId);
       console.log('DataSource:', dataSource);
+      console.log('Auth Token (first 20 chars):', guacamoleAuthToken.substring(0, 20) + '...');
       console.log('DEBUG - GUACAMOLE_PUBLIC_URL value:', GUACAMOLE_PUBLIC_URL);
       console.log('DEBUG - process.env.GUACAMOLE_PUBLIC_URL:', process.env.GUACAMOLE_PUBLIC_URL);
       console.log('DEBUG - process.env.CLIENT_URL:', process.env.CLIENT_URL);
@@ -448,8 +444,10 @@ router.get('/connection/:token', async (req, res) => {
       res.json({
         success: true,
         connectionId: connectionId,
+        dataSource: dataSource,
+        token: guacamoleAuthToken, // Frontend'e token'ı da gönder
         url: clientUrl,
-        iframeUrl: clientUrl, // iframeUrl ve url aynı - token ile otomatik giriş
+        iframeUrl: clientUrl,
       });
     } catch (createError) {
       console.error('Guacamole connection creation failed:', createError.message);
