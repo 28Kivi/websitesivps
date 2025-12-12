@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { logger } from '../../utils/logger';
 import './VDSDesktop.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-const GUACAMOLE_URL = process.env.REACT_APP_GUACAMOLE_URL || 'http://localhost:8080/guacamole';
 
 const VDSDesktop = ({ server, token }) => {
   const screenRef = useRef(null);
@@ -13,7 +12,6 @@ const VDSDesktop = ({ server, token }) => {
   const [connected, setConnected] = useState(false);
   const [guacamoleUrl, setGuacamoleUrl] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [shouldOpenNewTab, setShouldOpenNewTab] = useState(false);
 
   useEffect(() => {
     const fetchGuacamoleConnection = async () => {
@@ -91,17 +89,21 @@ const VDSDesktop = ({ server, token }) => {
     };
   }, [server, token]);
 
-  // Yeni sekmede Guacamole'i aç
+  // Token'ı session storage'a kaydet (iframe için)
   useEffect(() => {
-    if (connected && guacamoleUrl && !shouldOpenNewTab) {
-      logger.log('Opening Guacamole in new tab:', guacamoleUrl);
-      const newWindow = window.open(guacamoleUrl, '_blank', 'noopener,noreferrer');
-      if (!newWindow) {
-        setStatus('⚠️ Popup engelleyici aktif! Lütfen popup\'lara izin verin.');
+    if (connected && guacamoleUrl) {
+      // URL'den token'ı çıkar ve localStorage'a kaydet
+      const url = new URL(guacamoleUrl);
+      const token = url.searchParams.get('token');
+      const connectionId = guacamoleUrl.match(/client\/postgresql\/c\/(\d+)/)?.[1];
+      
+      if (token && connectionId) {
+        logger.log('Storing token for iframe:', { connectionId, tokenLength: token.length });
+        sessionStorage.setItem('guacamole_token', token);
+        sessionStorage.setItem('guacamole_connection', connectionId);
       }
-      setShouldOpenNewTab(true);
     }
-  }, [connected, guacamoleUrl, shouldOpenNewTab]);
+  }, [connected, guacamoleUrl]);
 
   if (loading) {
     return (
@@ -114,106 +116,39 @@ const VDSDesktop = ({ server, token }) => {
   }
 
   if (connected && guacamoleUrl) {
+    logger.log('Rendering Guacamole iframe with URL:', guacamoleUrl);
     return (
-      <div className="vds-desktop-container" style={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        minHeight: '100vh',
-        padding: '20px',
-        color: '#00ff41',
-        fontFamily: 'JetBrains Mono, monospace',
-        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)'
+      <div className="vds-desktop-container" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: '#000',
+        zIndex: 9999
       }}>
-        <div className="desktop-status" style={{
-          background: 'rgba(0, 0, 0, 0.9)',
-          border: '2px solid #00ff41',
-          borderRadius: '12px',
-          padding: '40px',
-          maxWidth: '600px',
-          textAlign: 'center',
-          boxShadow: '0 0 20px rgba(0, 255, 65, 0.3)'
-        }}>
-          <h2 style={{ color: '#00ff41', marginBottom: '20px', fontSize: '24px' }}>
-            ✅ Bağlantı Başarılı!
-          </h2>
-          <p style={{ fontSize: '16px', marginBottom: '20px', lineHeight: '1.6' }}>
-            <strong>{server.name}</strong> sunucusuna bağlantı kuruldu.
-            <br />
-            RDP masaüstü yeni sekmede açıldı.
-          </p>
-          
-          <div style={{
-            background: 'rgba(0, 255, 65, 0.1)',
-            border: '1px solid #00ff41',
-            borderRadius: '8px',
-            padding: '15px',
-            marginBottom: '20px',
-            fontSize: '14px'
-          }}>
-            <p style={{ marginBottom: '10px' }}>
-              <strong>💡 İpucu:</strong>
-            </p>
-            <p style={{ lineHeight: '1.6', opacity: 0.9 }}>
-              Eğer yeni sekme açılmadıysa, tarayıcınızın adres çubuğundaki 
-              popup engelleyici ikonuna tıklayın ve izin verin.
-            </p>
-          </div>
-          
-          <div style={{ 
-            display: 'flex', 
-            gap: '10px', 
-            justifyContent: 'center',
-            flexWrap: 'wrap'
-          }}>
-            <button 
-              onClick={() => window.location.href = '/dashboard'}
-              style={{
-                padding: '12px 24px',
-                background: '#00ff41',
-                color: '#000',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                fontFamily: 'JetBrains Mono, monospace',
-                transition: 'all 0.3s'
-              }}
-              onMouseOver={(e) => e.target.style.background = '#00dd35'}
-              onMouseOut={(e) => e.target.style.background = '#00ff41'}
-            >
-              ← Dashboard
-            </button>
-            
-            <button 
-              onClick={() => window.open(guacamoleUrl, '_blank')}
-              style={{
-                padding: '12px 24px',
-                background: 'transparent',
-                color: '#00ff41',
-                border: '2px solid #00ff41',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                fontFamily: 'JetBrains Mono, monospace',
-                transition: 'all 0.3s'
-              }}
-              onMouseOver={(e) => {
-                e.target.style.background = '#00ff41';
-                e.target.style.color = '#000';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = 'transparent';
-                e.target.style.color = '#00ff41';
-              }}
-            >
-              🔄 Tekrar Aç
-            </button>
-          </div>
-        </div>
+        <iframe
+          src={guacamoleUrl}
+          className="vds-desktop-iframe"
+          title={`${server.name} - ${server.desktopType} Desktop`}
+          allowFullScreen
+          allow="clipboard-read; clipboard-write"
+          referrerPolicy="origin"
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none'
+          }}
+          onError={(e) => {
+            logger.error('Iframe error:', e);
+            setStatus('Iframe yüklenirken hata oluştu');
+            setConnected(false);
+          }}
+          onLoad={() => {
+            logger.log('Iframe loaded successfully');
+            setStatus('Bağlantı başarılı');
+          }}
+        />
       </div>
     );
   }
