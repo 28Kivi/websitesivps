@@ -423,17 +423,22 @@ router.get('/connection/:token', async (req, res) => {
       // Her connection için fresh bir Guacamole auth token al/kullan
       const guacamoleAuthToken = await getAuthToken();
 
+      // DataSource'u al (Guacamole WebSocket tunnel için gerekli)
+      const dataSource = await getDataSource() || 'postgresql';
+
       // Guacamole client URL formatı: 
       // Option 1: /#/client/CONNECTION_ID (token cookie/session'da olmalı - çalışmaz iframe'de)
       // Option 2: /#/client/CONNECTION_ID?token=AUTH_TOKEN (token URL'de - bu çalışır)
       // Option 3: Direkt connection parametreleri ile (daha iyi - her seferinde yeni connection gerekmez)
       
-      // En iyi yöntem: Token'ı URL'e ekle ama connection parametrelerini de ekleyelim
+      // En iyi yöntem: Token'ı URL'e ekle ve dataSource parametresini de ekle
+      // Guacamole WebSocket tunnel için dataSource gerekli
       // Use public URL for frontend
-      const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${connectionId}?token=${guacamoleAuthToken}`;
+      const clientUrl = `${GUACAMOLE_PUBLIC_URL}/#/client/${connectionId}?token=${guacamoleAuthToken}&GUAC_DATA_SOURCE=${dataSource}`;
 
       console.log('Generated Guacamole client URL with auth token');
       console.log('Connection ID:', connectionId);
+      console.log('DataSource:', dataSource);
       console.log('DEBUG - GUACAMOLE_PUBLIC_URL value:', GUACAMOLE_PUBLIC_URL);
       console.log('DEBUG - process.env.GUACAMOLE_PUBLIC_URL:', process.env.GUACAMOLE_PUBLIC_URL);
       console.log('DEBUG - process.env.CLIENT_URL:', process.env.CLIENT_URL);
